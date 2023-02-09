@@ -117,7 +117,7 @@ const viewUser = async (req, res) => {
         const userLocated = await knex('users').where({ id: user.id }).first();
 
         if (!userLocated) {
-            return res.status(400).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'User not found' });
         }
 
         const { password, ...userLocatedData } = userLocated;
@@ -136,7 +136,7 @@ const deleteUser = async (req, res) => {
         const localizeUser = await knex('users').where({ id: user.id }).first();
 
         if (!localizeUser) {
-            return res.status(400).json({ message: 'User not found' })
+            return res.status(404).json({ message: 'User not found' })
         }
 
          await knex('users').where({ id: user.id }).del();
