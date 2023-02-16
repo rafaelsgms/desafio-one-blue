@@ -12,8 +12,8 @@ const registerQuote = async (req, res) => {
             return res.status(404).json({ message: 'User not found' })
         }
 
-        if(quote.length < 6) {
-            return res.status(400).json({message: "Quote must be more than 6 characters"});
+        if (quote.length < 6) {
+            return res.status(400).json({ message: "Quote must be more than 6 characters" });
         }
 
         const addQuote = await knex('thoughts').insert({
@@ -38,7 +38,7 @@ const editQuote = async (req, res) => {
         const localizeUser = await knex('users').where({ id: user.id }).first();
 
         const localizeQuote = await knex('thoughts').where({ id }).first();
-        
+
         if (!localizeQuote) {
             return res.status(404).json({ message: 'Quote not found' });
         }
@@ -56,7 +56,47 @@ const editQuote = async (req, res) => {
     }
 }
 
+const viewQuote = async (req, res) => {
+    try {
+        const viewQuote = await knex('thoughts').orderBy('quote_date');
+
+        return res.status(200).json(viewQuote)
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal server error' + error.message });
+    }
+}
+
+const deleteQuote = async (req, res) => {
+    const { quote, user } = req;
+
+    const { id } = req.params;
+
+    try {
+        const localizeUser = await knex('users').where({ id: user.id }).first();
+
+        const localizeQuote = await knex('thoughts').where({ id }).first();
+
+        if (!localizeQuote) {
+            return res.status(404).json({ message: 'Quote not found' });
+        }
+
+        if (localizeUser.id !== localizeQuote.id_quote) {
+            return res.status(404).json({ message: 'You can´t delete another users quote' })
+        }
+
+        await knex('thoughts').where({ id }).del();
+
+        return res.status(200).json({message: 'Quote deleted successfully!'})
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal server error' + error.message });
+    }
+}
+
 module.exports = {
     registerQuote,
-    editQuote
+    editQuote,
+    viewQuote,
+    deleteQuote
 }
