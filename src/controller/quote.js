@@ -18,7 +18,8 @@ const registerQuote = async (req, res) => {
 
         const addQuote = await knex('thoughts').insert({
             id_quote: user.id,
-            quote
+            quote,
+            likes: 0
         })
 
         return res.status(201).json({ message: 'Quote is registered successfully!' })
@@ -68,7 +69,7 @@ const viewQuote = async (req, res) => {
 }
 
 const deleteQuote = async (req, res) => {
-    const { quote, user } = req;
+    const { user } = req;
 
     const { id } = req.params;
 
