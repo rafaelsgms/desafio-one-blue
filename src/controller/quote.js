@@ -88,7 +88,30 @@ const deleteQuote = async (req, res) => {
 
         await knex('thoughts').where({ id }).del();
 
-        return res.status(200).json({message: 'Quote deleted successfully!'})
+        return res.status(200).json({ message: 'Quote deleted successfully!' })
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal server error' + error.message });
+    }
+}
+
+const likeQuote = async (req, res) => {
+    const { likes } = req;
+
+    const { id } = req.params;
+
+    try {
+        const localizeQuote = await knex('thoughts').where({ id }).first();
+
+        if (!localizeQuote) {
+            return res.status(404).json({ message: 'Quote not found' });
+        }
+
+        let quoteLikes = localizeQuote.likes;
+
+        const addLike = await knex('thoughts').update({ likes: quoteLikes + 1 }).where({ id });
+
+        return res.status(200).json({message: 'Liked!'})
 
     } catch (error) {
         return res.status(500).json({ message: 'Internal server error' + error.message });
@@ -99,5 +122,6 @@ module.exports = {
     registerQuote,
     editQuote,
     viewQuote,
-    deleteQuote
+    deleteQuote,
+    likeQuote
 }
