@@ -118,10 +118,34 @@ const likeQuote = async (req, res) => {
     }
 }
 
+const dislikeQuote = async(req,res) => {
+    const { likes } = req;
+
+    const { id } = req.params;
+
+    try {
+        const localizeQuote = await knex('thoughts').where({ id }).first();
+
+        if (!localizeQuote) {
+            return res.status(404).json({ message: 'Quote not found' });
+        }
+
+        let quoteLikes = localizeQuote.likes;
+
+        const addLike = await knex('thoughts').update({ likes: quoteLikes - 1 }).where({ id });
+
+        return res.status(200).json({message: 'Disliked!'})
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal server error' + error.message });
+    }
+}
+
 module.exports = {
     registerQuote,
     editQuote,
     viewQuote,
     deleteQuote,
-    likeQuote
+    likeQuote,
+    dislikeQuote
 }
