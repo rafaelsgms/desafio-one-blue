@@ -36,6 +36,7 @@ Função assíncrona que traz o usuário direto da requisição, username, email
 Verificação se o username e o email não existem, retornando uma mensagem de campos de preenchimento obrigatório;
 
 Bloco de trycatch
+
 - Usuário e email encontrados, validação retornando uma mensagem caso os campos já existam;
 - Dados do usuário através do id único deste usuário;
 
